@@ -100,30 +100,57 @@ public:
 	typedef std::function<void(String, String, bool)> THandlerFunction_Data;
 	typedef std::function<bool(WiFiClientSecure *client, String host)> THandlerFunction_Secure;
 
-	MQTTClient();
-	~MQTTClient();
-	void onConnect(THandlerFunction fn);
-	void onDisconnect(THandlerFunction fn);
-	void onSubscribe(THandlerFunction_PubSub fn);
-	void onPublish(THandlerFunction_PubSub fn);
-	void onData(THandlerFunction_Data fn);
-	void onSecure(THandlerFunction_Secure fn);
+    MQTTClient();
 
-	bool begin(String uri);
-	bool begin(String uri, int keepalive, bool clean_session); 
-	bool begin(String uri, LwtOptions lwt);
-	bool begin(String uri, LwtOptions lwt, int keepalive, bool clean_session);
-	void handle();
-	bool connect();
-	int subscribe(String topic);
-	int unSubscribe(String topic);
-	int subscribe(String topic, uint8_t qos);
-	int publish(String topic, String data);
-	int publish(String topic, String data, int qos, int retain);
+    ~MQTTClient();
+
+    void onConnect(THandlerFunction fn);
+
+    void onDisconnect(THandlerFunction fn);
+
+    void onSubscribe(THandlerFunction_PubSub fn);
+
+    void onPublish(THandlerFunction_PubSub fn);
+
+    void onData(THandlerFunction_Data fn);
+
+    void onSecure(THandlerFunction_Secure fn);
+
+    bool begin(String uri);
+
+    bool begin(String uri, String client_id);
+
+    bool begin(String uri, int keepalive, bool clean_session);
+
+    bool begin(String uri, String client_id, int keepalive, bool clean_session);
+
+    bool begin(String uri, LwtOptions lwt);
+
+    bool begin(String uri, String client_id, LwtOptions lwt);
+
+    bool begin(String uri, LwtOptions lwt, int keepalive, bool clean_session);
+
+    bool begin(String uri, String client_id, LwtOptions lwt, int keepalive, bool clean_session);
+
+    void handle();
+
+    bool connect();
+
+    bool connected();
+
+    int subscribe(String topic);
+
+    int unSubscribe(String topic);
+
+    int subscribe(String topic, uint8_t qos);
+
+    int publish(String topic, String data);
+
+    int publish(String topic, String data, int qos, int retain);
+
 protected:
-	std::unique_ptr<WiFiClient> _tcp;
+    std::unique_ptr <WiFiClient> _tcp;
 	MQTTTransportTraitsPtr _transportTraits;
-	bool connected();
 	int processRead();
 	void queue(int remove_on_sent);
 	void sendPing();

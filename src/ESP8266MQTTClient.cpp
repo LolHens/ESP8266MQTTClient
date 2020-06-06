@@ -63,20 +63,38 @@ MQTTClient::~MQTTClient()
 }
 
 
-bool MQTTClient::begin(String uri)
-{
-    return begin(uri, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+bool MQTTClient::begin(String uri) {
+    return begin(uri, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, DEFAULT_MQTT_KEEPALIVE,
+                 DEFAULT_MQTT_CLEAN_SESSION);
 }
-bool MQTTClient::begin(String uri, int keepalive, bool clean_session)
-{
+
+bool MQTTClient::begin(String uri, String client_id) {
+    return begin(uri, client_id, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, DEFAULT_MQTT_KEEPALIVE,
+                 DEFAULT_MQTT_CLEAN_SESSION);
+}
+
+bool MQTTClient::begin(String uri, int keepalive, bool clean_session) {
     return begin(uri, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, keepalive, clean_session);
 }
-bool MQTTClient::begin(String uri, LwtOptions lwt)
-{
+
+bool MQTTClient::begin(String uri, String client_id, int keepalive, bool clean_session) {
+    return begin(uri, client_id, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, keepalive, clean_session);
+}
+
+bool MQTTClient::begin(String uri, LwtOptions lwt) {
     return begin(uri, lwt, DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
 }
-bool MQTTClient::begin(String uri, LwtOptions lwt, int keepalive, bool clean_session)
-{
+
+bool MQTTClient::begin(String uri, String client_id, LwtOptions lwt) {
+    return begin(uri, client_id, lwt, DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+}
+
+bool MQTTClient::begin(String uri, LwtOptions lwt, int keepalive, bool clean_session) {
+    String client_id = String("ESP_") + ESP.getChipId();
+    return begin(uri, client_id, lwt, keepalive, clean_session);
+}
+
+bool MQTTClient::begin(String uri, String client_id, LwtOptions lwt, int keepalive, bool clean_session) {
     parsed_uri_t *puri = parse_uri(uri.c_str());
     MQTT_CHECK(puri->scheme == NULL, "ERROR: Protocol is not NULL\r\n", false);
     MQTT_CHECK(puri->host == NULL, "ERROR: Host is not NULL\r\n", false);
@@ -84,14 +102,9 @@ bool MQTTClient::begin(String uri, LwtOptions lwt, int keepalive, bool clean_ses
     _host = String(puri->host);
     _port = DEFAULT_MQTT_PORT;
     _path = "/";
-
-    if(puri->fragment) {
-        _client_id = String(puri->fragment);
-    } else {
-        _client_id = String("ESP_") + ESP.getChipId();
-    }
-    LOG("MQTT ClientId: %s\r\n", _client_id.c_str());
-    if(puri->port) {
+    _client_id = client_id
+            LOG("MQTT ClientId: %s\r\n", _client_id.c_str());
+    if (puri->port) {
         _port = atoi(puri->port);
     }
 
@@ -156,8 +169,7 @@ bool MQTTClient::begin(String uri, LwtOptions lwt, int keepalive, bool clean_ses
         _transportTraits = MQTTTransportTraitsPtr(new MQTTWSTraits());
     } else if(_scheme == "wss") {
         _transportTraits = MQTTTransportTraitsPtr(new MQTTWSTraits(true));
-    }
-    else {
+    } else {
         free(_state.out_buffer);
         free(_state.in_buffer);
         LOG("ERROR: currently only support mqtt over tcp\r\n");
@@ -182,18 +194,31 @@ bool MQTTClient::connect(void)
     int connect_tick = millis();
     if(connected()) {
         LOG("[MQTT-Client] connect. already connected, try reuse!\n");
-        while(_tcp->available() > 0) {
+        while (_tcp->available() > 0) {
             _tcp->read();
         }
         return true;
     }
 
-    if(!_transportTraits) {
+    if (!_transportTraits) {
         LOG("[MQTT-Client] connect: MQTTClient::begin was not called or returned error\n");
         return false;
     }
+
+    if (_secure_cb && (_scheme == "wss" || _scheme == "mqtts")) {
+        LOG("[MQTT-Client] begin verifying %s:%u\n", _host.c_str(), _port);
+        // auto wcs = reinterpret_cast<WiFiClientSecure&>(*_tcp);
+        WiFiClientSecure * wcs = (WiFiClientSecure * )
+        _tcp.get();
+        if (!_secure_cb(wcs, _host)) {
+            _tcp->stop();
+            LOG("[MQTT-Client] failed verify to %s:%u\n", _host.c_str(), _port);
+            return false;
+        }
+    }
+
     _tcp->setNoDelay(true);
-    if(!_transportTraits->connect(_tcp.get(), _host.c_str(), _port, _path.c_str())) { 
+    if (!_transportTraits->connect(_tcp.get(), _host.c_str(), _port, _path.c_str())) {
         LOG("[MQTT-Client] failed connect to %s:%u\n", _host.c_str(), _port);
         return false;
     }
@@ -201,16 +226,6 @@ bool MQTTClient::connect(void)
     LOG("[MQTT-Client] connected to %s:%u\n", _host.c_str(), _port);
     
 
-    if(_secure_cb && (_scheme == "wss" || _scheme == "mqtts")) {
-        LOG("[MQTT-Client] begin verifying %s:%u\n", _host.c_str(), _port);
-        // auto wcs = reinterpret_cast<WiFiClientSecure&>(*_tcp);
-        WiFiClientSecure *wcs = (WiFiClientSecure*) _tcp.get();
-        if(!_secure_cb(wcs, _host)) {
-            _tcp->stop();
-            LOG("[MQTT-Client] failed verify to %s:%u\n", _host.c_str(), _port);
-            return false;
-        }
-    }
     if(!_tcp->connected())
             return false;
     _state.outbound_message = mqtt_msg_connect(&_state.connection,

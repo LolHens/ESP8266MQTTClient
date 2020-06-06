@@ -43,8 +43,7 @@ parsed_uri_t *parse_uri(const char *url)
         PARSE_HOST,
         PARSE_PORT,
         PARSE_PATH,
-        PARSE_QUERY,
-        PARSE_FRAGMENT
+        PARSE_QUERY
     } parse_state = 0;
     puri = (parsed_uri_t *)malloc(sizeof(parsed_uri_t));
     if(NULL == puri) {
@@ -66,7 +65,6 @@ parsed_uri_t *parse_uri(const char *url)
     puri->port = NULL;
     puri->path = NULL;
     puri->query = NULL;
-    puri->fragment = NULL;
     puri->username = NULL;
     puri->password = NULL;
 
@@ -101,9 +99,6 @@ parsed_uri_t *parse_uri(const char *url)
                 }
                 if(bracket_flag == 0 && *curr_ptr == ':') {
                     JUMP_NEXT_STATE(puri->port = puri->password, PARSE_PASSWORD_OR_PORT);
-                } else if(bracket_flag == 0 && *curr_ptr == '#') {
-                    puri->username = NULL;
-                    JUMP_NEXT_STATE(puri->fragment, PARSE_FRAGMENT);
                 } else if(bracket_flag == 0 && *curr_ptr == '/') {
                     puri->username = NULL;
                     JUMP_NEXT_STATE(puri->path, PARSE_PATH);
@@ -120,11 +115,6 @@ parsed_uri_t *parse_uri(const char *url)
                     puri->password = NULL;
                     JUMP_NEXT_STATE(puri->path, PARSE_PATH);
                     break;
-                } else if(*curr_ptr == '#') {
-                    puri->username = NULL;
-                    puri->password = NULL;
-                    JUMP_NEXT_STATE(puri->fragment, PARSE_FRAGMENT);
-                    break;
                 }
                 curr_ptr ++;
                 break;
@@ -139,9 +129,6 @@ parsed_uri_t *parse_uri(const char *url)
                 } else if(bracket_flag == 0 && *curr_ptr == '/') {
                     puri->port = NULL;
                     JUMP_NEXT_STATE(puri->path, PARSE_PATH);
-                } else if(bracket_flag == 0 && *curr_ptr == '#') {
-                    puri->port = NULL;
-                    JUMP_NEXT_STATE(puri->fragment, PARSE_FRAGMENT);
                 }
                 curr_ptr ++;
                 break;
@@ -150,23 +137,15 @@ parsed_uri_t *parse_uri(const char *url)
                     JUMP_NEXT_STATE(puri->path, PARSE_PATH);
                 } else if(*curr_ptr == '?') {
                     JUMP_NEXT_STATE(puri->query, PARSE_QUERY);
-                } else if(*curr_ptr == '#') {
-                    JUMP_NEXT_STATE(puri->fragment, PARSE_FRAGMENT);
                 }
                 curr_ptr ++;
                 break;
             case PARSE_PATH: /* path */
                 if(*curr_ptr == '?') {
                     // JUMP_NEXT_STATE(puri->query, PARSE_QUERY);
-                } else if(*curr_ptr == '#') {
-                    JUMP_NEXT_STATE(puri->fragment, PARSE_FRAGMENT);
                 }
                 curr_ptr ++;
             case PARSE_QUERY: /* query */
-                if(*curr_ptr == '#') {
-                    JUMP_NEXT_STATE(puri->fragment, PARSE_FRAGMENT);
-                }
-            case PARSE_FRAGMENT: /* fragment*/
                 curr_ptr ++;
                 break;
         }
@@ -197,7 +176,6 @@ void parse_uri_info(parsed_uri_t *puri)
             "host addr: %x\n"
             "port addr: %x\n"
             "path addr: %x\n"
-            "fragment addr: %x\n"
             "extension addr: %x\n"
             "host_ext addr: %x\r\n",
             (int)puri->scheme,
@@ -206,7 +184,6 @@ void parse_uri_info(parsed_uri_t *puri)
             (int)puri->host,
             (int)puri->port,
             (int)puri->path,
-            (int)puri->fragment,
             (int)puri->extension,
             (int)puri->host_ext);
 
@@ -227,9 +204,6 @@ void parse_uri_info(parsed_uri_t *puri)
     }
     if(puri->password && puri->password[0] != 0) {
         printf("password: %s\n", puri->password);
-    }
-    if(puri->fragment && puri->fragment[0] != 0) {
-        printf("fragment: %s\n", puri->fragment);
     }
     if(puri->extension && puri->extension[0] != 0) {
         printf("extension: %s\n", puri->extension);
