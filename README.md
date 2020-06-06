@@ -25,11 +25,15 @@ Features:
     + **Minimal** `mqtt://test.mosquitto.org`, with `user`, `pass` = NULL, port = 1883, client id = "ESP_" + ESP.getChipId()
 
 ## API 
-### Setup  
+### Setup
 - bool begin(String uri);
-- bool begin(String uri, int keepalive, bool clean_session); 
+- bool begin(String uri, String client_id);
+- bool begin(String uri, int keepalive, bool clean_session);
+- bool begin(String uri, String client_id, int keepalive, bool clean_session);
 - bool begin(String uri, LwtOptions lwt);
-- bool begin(String uri, LwtOptions lwt, int keepalive, bool clean_session)  
+- bool begin(String uri, String client_id, LwtOptions lwt);
+- bool begin(String uri, LwtOptions lwt, int keepalive, bool clean_session);
+- bool begin(String uri, String client_id, LwtOptions lwt, int keepalive, bool clean_session);
 
 ### Events
 - void onConnect(THandlerFunction fn);
@@ -38,7 +42,7 @@ Features:
 - void onPublish(THandlerFunction_PubSub fn);
 - void onData(THandlerFunction_Data fn);
 
-### Pub/Sub 
+### Pub/Sub
 - int subscribe(String topic);
 - int subscribe(String topic, uint8_t qos);
 - int publish(String topic, String data);
