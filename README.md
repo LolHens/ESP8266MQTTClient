@@ -20,8 +20,8 @@ Features:
     + `mqtt` for MQTT over TCP 
     + `ws` for MQTT over Websocket
 - Example:
-    + **Full** `mqtt://username:password@test.mosquitto.org:1883#my_client_id`
-    + **Websocket** `ws://username:password@test.mosquitto.org:1883/mqtt#my_client_id`
+    + **Full** `mqtt://username:password@test.mosquitto.org:1883`
+    + **Websocket** `ws://username:password@test.mosquitto.org:1883/mqtt`
     + **Minimal** `mqtt://test.mosquitto.org`, with `user`, `pass` = NULL, port = 1883, client id = "ESP_" + ESP.getChipId()
 
 ## API 
