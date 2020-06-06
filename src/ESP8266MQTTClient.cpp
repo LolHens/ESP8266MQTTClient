@@ -80,7 +80,6 @@ bool MQTTClient::begin(String uri, LwtOptions lwt, int keepalive, bool clean_ses
     parsed_uri_t *puri = parse_uri(uri.c_str());
     MQTT_CHECK(puri->scheme == NULL, "ERROR: Protocol is not NULL\r\n", false);
     MQTT_CHECK(puri->host == NULL, "ERROR: Host is not NULL\r\n", false);
-    delay(1000);
     _scheme = String(puri->scheme);
     _host = String(puri->host);
     _port = DEFAULT_MQTT_PORT;
