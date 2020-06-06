@@ -32,14 +32,14 @@ License (MIT license):
  * constructor
  */
 MQTTClient::MQTTClient():
-  _reconnect_tick(0),
-  _initialized(false),
-    _connected_cb(NULL),
-    _disconnected_cb(NULL),
-    _subscribe_cb(NULL),
-    _publish_cb(NULL),
-    _data_cb(NULL),
-  _secure_cb(NULL)
+        _reconnect_tick(0),
+        _initialized(false),
+        _connected_cb(NULL),
+        _disconnected_cb(NULL),
+        _subscribe_cb(NULL),
+        _publish_cb(NULL),
+        _data_cb(NULL),
+        _secure_cb(NULL)
 {
     _outbox = ob_create();
 
@@ -308,21 +308,22 @@ void MQTTClient::handle(void)
     if(!_initialized)
         return;
     if(!connected()) {
-        if (!_disconnect_cb_called) {
-            _disconnected_cb();
-            _disconnect_cb_called = true;
-        }
-
         if(_reconnect_tick != 0 && millis() - _reconnect_tick < MQTT_RECONNECT_TIMEOUT)
             return;
 
         _reconnect_tick = millis();
         if(connect()) {
-            if(_connected_cb)
+            if (_connected_cb)
                 _connected_cb();
-                _disconnect_cb_called = false;
+            _disconnect_cb_called = false;
             _keepalive_tick = millis();
         } else {
+            if (!_disconnect_cb_called) {
+                if (_disconnected_cb)
+                    _disconnected_cb();
+                _disconnect_cb_called = true;
+            }
+
             return;
         }
     }
