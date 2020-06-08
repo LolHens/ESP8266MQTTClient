@@ -102,8 +102,8 @@ bool MQTTClient::begin(String uri, String client_id, LwtOptions lwt, int keepali
     _host = String(puri->host);
     _port = DEFAULT_MQTT_PORT;
     _path = "/";
-    _client_id = client_id
-            LOG("MQTT ClientId: %s\r\n", _client_id.c_str());
+    _client_id = client_id;
+    LOG("MQTT ClientId: %s\r\n", _client_id.c_str());
     if (puri->port) {
         _port = atoi(puri->port);
     }
