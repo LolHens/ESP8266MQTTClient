@@ -15,8 +15,8 @@ void setup() {
     configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
 
     mqtt.onSecure([](WiFiClientSecure *client, String host) {
-        Serial.printf("Verify: %s\r\n", host.c_str());
-        return client->verify(fingerprint.c_str(), host.c_str());
+        Serial.printf("Secure: %s\r\n", host.c_str());
+        return client->setFingerprint(fingerprint);
     });
     
     //topic, data, data is continuing
@@ -37,7 +37,7 @@ void setup() {
     mqtt.begin("mqtts://test.mosquitto.org:8883");
     //mqtt.begin("mqtts://test.mosquitto.org:8883", {.lwtTopic = "hello", .lwtMsg = "offline", .lwtQos = 0, .lwtRetain = 0});
     //mqtt.begin("mqtts://user:pass@mosquito.org:8883");
-    //mqtt.begin("mqtts://user:pass@mosquito.org:8883#clientId");
+    //mqtt.begin("mqtts://user:pass@mosquito.org:8883", "clientId");
 
 }
 
