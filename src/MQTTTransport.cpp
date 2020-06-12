@@ -178,6 +178,13 @@ int MQTTWSTraits::write(WiFiClient* client, unsigned char *data, int size)
 
 // https://tools.ietf.org/html/rfc6455#section-5.2
 int MQTTWSTraits::read(WiFiClient *client, unsigned char *data, int size) {
+    if (size < 0) {
+        return -1;
+    } else if (size == 0) {
+        return 0;
+    }
+    uint32_t max_buffer_length = size;
+
     if (client->available() < 2) {
         return 0;
     }
@@ -227,9 +234,9 @@ int MQTTWSTraits::read(WiFiClient *client, unsigned char *data, int size) {
 
     // read payload but only so much that it fits into the buffer size except when more is already available
     uint32_t buffer_length;
-    if (size < payload_length) {
+    if (max_buffer_length < payload_length) {
         uint32_t payload_avail = client->available();
-        if (payload_avail > size && payload_avail < payload_length) {
+        if (payload_avail > max_buffer_length && payload_avail < payload_length) {
             buffer_length = payload_avail;
         } else {
             buffer_length = size;
@@ -241,8 +248,8 @@ int MQTTWSTraits::read(WiFiClient *client, unsigned char *data, int size) {
     uint8_t buffer[buffer_length];
     uint32_t read_length = client->read(buffer, buffer_length);
     uint32_t copy_length = read_length;
-    if (size < copy_length) {
-        copy_length = size;
+    if (max_buffer_length < copy_length) {
+        copy_length = max_buffer_length;
     }
 
     uint8_t *data_ptr = buffer;
