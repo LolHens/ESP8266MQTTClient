@@ -1,6 +1,8 @@
 # MQTT Client library for ESP8266 Arduino
 
-This is MQTT client library for ESP8266, using mqtt_msg package from [MQTT client library for Contiki](https://github.com/esar/contiki-mqtt) and use for ESP8266 NON-OS SDK [esp_mqtt](https://github.com/tuanpmt/esp_mqtt)
+This is a fork of https://github.com/tuanpmt/ESP8266MQTTClient
+
+This is an MQTT client library for ESP8266, using mqtt_msg package from [MQTT client library for Contiki](https://github.com/esar/contiki-mqtt) for use with the ESP8266 NON-OS SDK [esp_mqtt](https://github.com/tuanpmt/esp_mqtt)
 
 Features:
 
@@ -12,17 +14,21 @@ Features:
 
 ## Status
 - Support 3 type of qos (0, 1, 2) and outbox
-- only mqtt over TCP
+- Supports MQTT over TCP, TLS, Websocket and Secure Websocket
 
 ## MQTT URI Scheme
 
-- `mqtt://[username][:password@]hostname[:port][#clientId]`
-    + `mqtt` for MQTT over TCP 
+- `mqtt://hostname[:port]`
+    + `mqtt` for MQTT over TCP
+    + `mqtts` for MQTT over TLS
     + `ws` for MQTT over Websocket
+    + `wss` for MQTT over Secure Websocket
+    + port is 1883 by default
+    + client_id is `"ESP_" + ESP.getChipId()` by default
 - Example:
-    + **Full** `mqtt://username:password@test.mosquitto.org:1883`
-    + **Websocket** `ws://username:password@test.mosquitto.org:1883/mqtt`
-    + **Minimal** `mqtt://test.mosquitto.org`, with `user`, `pass` = NULL, port = 1883, client id = "ESP_" + ESP.getChipId()
+    + **Full** `mqtt://test.mosquitto.org:1883`
+    + **Websocket** `ws://test.mosquitto.org:1883/mqtt`
+    + **Minimal** `mqtt://test.mosquitto.org` (port = 1883)
 
 ## API 
 ### Setup
@@ -58,7 +64,7 @@ Features:
 
 ## License
 
-Copyright (c) 2016 Tuan PM (https://twitter.com/tuanpmt) 
+Copyright (c) 2016 Tuan PM (https://twitter.com/tuanpmt)
 ESP8266 port (c) 2016 Ivan Grokhotkov (ivan@esp8266.com)
 
 License Apache License
