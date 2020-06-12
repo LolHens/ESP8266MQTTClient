@@ -38,8 +38,8 @@ void setup() {
 
   mqtt.begin("wss://broker.mqttdashboard.com:8443/mqtt");
   //mqtt.begin("ws://test.mosquitto.org:8443", {.lwtTopic = "hello", .lwtMsg = "offline", .lwtQos = 0, .lwtRetain = 0});
-  //mqtt.begin("ws://user:pass@mosquito.org:8443");
-  //mqtt.begin("ws://user:pass@mosquito.org:8443", "clientId");
+  //mqtt.begin("ws://mosquito.org:8443", "user", "pass");
+  //mqtt.begin("ws://mosquito.org:8443", "clientId", "user", "pass");
 
 }
 

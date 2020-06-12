@@ -36,8 +36,8 @@ void setup() {
 
     mqtt.begin("mqtts://test.mosquitto.org:8883");
     //mqtt.begin("mqtts://test.mosquitto.org:8883", {.lwtTopic = "hello", .lwtMsg = "offline", .lwtQos = 0, .lwtRetain = 0});
-    //mqtt.begin("mqtts://user:pass@mosquito.org:8883");
-    //mqtt.begin("mqtts://user:pass@mosquito.org:8883", "clientId");
+    //mqtt.begin("mqtts://mosquito.org:8883", "user", "pass");
+    //mqtt.begin("mqtts://mosquito.org:8883", "clientId", "user", "pass");
 
 }
 
