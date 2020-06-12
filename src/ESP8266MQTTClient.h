@@ -118,19 +118,35 @@ public:
 
     bool begin(String uri);
 
+    bool begin(String uri, String username, String password);
+
     bool begin(String uri, String client_id);
+
+    bool begin(String uri, String client_id, String username, String password);
 
     bool begin(String uri, int keepalive, bool clean_session);
 
+    bool begin(String uri, String username, String password, int keepalive, bool clean_session);
+
     bool begin(String uri, String client_id, int keepalive, bool clean_session);
+
+    bool begin(String uri, String client_id, String username, String password, int keepalive, bool clean_session);
 
     bool begin(String uri, LwtOptions lwt);
 
+    bool begin(String uri, String username, String password, LwtOptions lwt);
+
     bool begin(String uri, String client_id, LwtOptions lwt);
+
+    bool begin(String uri, String client_id, String username, String password, LwtOptions lwt);
 
     bool begin(String uri, LwtOptions lwt, int keepalive, bool clean_session);
 
+    bool begin(String uri, String username, String password, LwtOptions lwt, int keepalive, bool clean_session);
+
     bool begin(String uri, String client_id, LwtOptions lwt, int keepalive, bool clean_session);
+
+    bool begin(String uri, String client_id, String username, String password, LwtOptions lwt, int keepalive, bool clean_session);
 
     void handle();
 

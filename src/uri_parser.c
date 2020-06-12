@@ -38,8 +38,6 @@ parsed_uri_t *parse_uri(const char *url)
     int bracket_flag;
     enum parse_state_t {
         PARSE_SCHEME = 0,
-        PARSE_USERNAME_OR_HOST,
-        PARSE_PASSWORD_OR_PORT,
         PARSE_HOST,
         PARSE_PORT,
         PARSE_PATH,
@@ -47,7 +45,7 @@ parsed_uri_t *parse_uri(const char *url)
     } parse_state = 0;
     puri = (parsed_uri_t *)malloc(sizeof(parsed_uri_t));
     if(NULL == puri) {
-      //malloc failed, don't try to memset it
+        //malloc failed, don't try to memset it
         return NULL;
     }
     memset(puri, 0, sizeof(parsed_uri_t));
@@ -65,8 +63,6 @@ parsed_uri_t *parse_uri(const char *url)
     puri->port = NULL;
     puri->path = NULL;
     puri->query = NULL;
-    puri->username = NULL;
-    puri->password = NULL;
 
     curr_ptr = puri->_uri;
     puri->scheme = curr_ptr;
@@ -81,41 +77,13 @@ parsed_uri_t *parse_uri(const char *url)
                     *curr_ptr++ = 0;
                     *curr_ptr++ = 0;
                     puri->host = curr_ptr;
-                    puri->username = curr_ptr;
-                    parse_state = PARSE_USERNAME_OR_HOST; //next is username or host
+                    parse_state = PARSE_HOST; //next is host
                     break;
                 }
                 // if(!_is_scheme_char(*curr_ptr)) {
                 //  free_parsed_uri(puri);
                 //  return NULL;
                 // }
-                curr_ptr ++;
-                break;
-            case PARSE_USERNAME_OR_HOST: /* username or host*/
-                if('[' == *curr_ptr && bracket_flag == 0) {
-                    bracket_flag = 1;
-                } else if(']' == *curr_ptr && bracket_flag == 1) {
-                    bracket_flag = 0;
-                }
-                if(bracket_flag == 0 && *curr_ptr == ':') {
-                    JUMP_NEXT_STATE(puri->port = puri->password, PARSE_PASSWORD_OR_PORT);
-                } else if(bracket_flag == 0 && *curr_ptr == '/') {
-                    puri->username = NULL;
-                    JUMP_NEXT_STATE(puri->path, PARSE_PATH);
-                }
-                curr_ptr ++;
-                break;
-            case PARSE_PASSWORD_OR_PORT: /* password or port */
-                if(*curr_ptr == '@') {
-                    puri->port = NULL;
-                    JUMP_NEXT_STATE(puri->host, PARSE_HOST);
-                    break;
-                } else if(*curr_ptr == '/') {
-                    puri->username = NULL;
-                    puri->password = NULL;
-                    JUMP_NEXT_STATE(puri->path, PARSE_PATH);
-                    break;
-                }
                 curr_ptr ++;
                 break;
             case PARSE_HOST: /* host */
@@ -151,14 +119,8 @@ parsed_uri_t *parse_uri(const char *url)
         }
 
     }
-    if(parse_state < PARSE_HOST) {
-        puri->host = puri->username;
-        puri->port = puri->password;
-        puri->username = NULL;
-        puri->password = NULL;
-    }
     if (puri->path && puri->path[0]!= 0){
-      char *temp = (char*)malloc(strlen(puri->path) + 2);
+        char *temp = (char*)malloc(strlen(puri->path) + 2);
         sprintf(temp, "/%s", puri->path);
         puri->path = temp;
     } else {
@@ -171,16 +133,12 @@ parsed_uri_t *parse_uri(const char *url)
 void parse_uri_info(parsed_uri_t *puri)
 {
     printf( "scheme addr: %x\n"
-            "Username addr: %x\n"
-            "password addr: %x\n"
             "host addr: %x\n"
             "port addr: %x\n"
             "path addr: %x\n"
             "extension addr: %x\n"
             "host_ext addr: %x\r\n",
             (int)puri->scheme,
-            (int)puri->username,
-            (int)puri->password,
             (int)puri->host,
             (int)puri->port,
             (int)puri->path,
@@ -198,12 +156,6 @@ void parse_uri_info(parsed_uri_t *puri)
     }
     if(puri->port && puri->port[0] != 0) {
         printf("port: %s\n", puri->port);
-    }
-    if(puri->username && puri->username[0] != 0) {
-        printf("username: %s\n", puri->username);
-    }
-    if(puri->password && puri->password[0] != 0) {
-        printf("password: %s\n", puri->password);
     }
     if(puri->extension && puri->extension[0] != 0) {
         printf("extension: %s\n", puri->extension);

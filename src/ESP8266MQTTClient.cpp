@@ -64,37 +64,81 @@ MQTTClient::~MQTTClient()
 
 
 bool MQTTClient::begin(String uri) {
-    return begin(uri, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, DEFAULT_MQTT_KEEPALIVE,
-                 DEFAULT_MQTT_CLEAN_SESSION);
+    return begin(uri, "", "", "", {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+}
+
+bool MQTTClient::begin(String uri, String username, String password) {
+    return begin(uri, "", username, password, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
 }
 
 bool MQTTClient::begin(String uri, String client_id) {
-    return begin(uri, client_id, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, DEFAULT_MQTT_KEEPALIVE,
-                 DEFAULT_MQTT_CLEAN_SESSION);
+    return begin(uri, client_id, "", "", {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+}
+
+bool MQTTClient::begin(String uri, String client_id, String username, String password) {
+    return begin(uri, client_id, username, password, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
 }
 
 bool MQTTClient::begin(String uri, int keepalive, bool clean_session) {
-    return begin(uri, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, keepalive, clean_session);
+    return begin(uri, "", "", "", {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 keepalive, clean_session);
+}
+
+bool MQTTClient::begin(String uri, String username, String password, int keepalive, bool clean_session) {
+    return begin(uri, "", username, password, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 keepalive, clean_session);
 }
 
 bool MQTTClient::begin(String uri, String client_id, int keepalive, bool clean_session) {
-    return begin(uri, client_id, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0}, keepalive, clean_session);
+    return begin(uri, client_id, "", "", {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 keepalive, clean_session);
+}
+
+bool MQTTClient::begin(String uri, String client_id, String username, String password, int keepalive, bool clean_session) {
+    return begin(uri, client_id, username, password, {.lwtTopic = "", .lwtMsg = "", .lwtQos = 0, .lwtRetain = 0},
+                 keepalive, clean_session);
 }
 
 bool MQTTClient::begin(String uri, LwtOptions lwt) {
-    return begin(uri, lwt, DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+    return begin(uri, "", "", "", lwt,
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+}
+
+bool MQTTClient::begin(String uri, String username, String password, LwtOptions lwt) {
+    return begin(uri, "", username, password, lwt,
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
 }
 
 bool MQTTClient::begin(String uri, String client_id, LwtOptions lwt) {
-    return begin(uri, client_id, lwt, DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+    return begin(uri, client_id, "", "", lwt,
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
+}
+
+bool MQTTClient::begin(String uri, String client_id, String username, String password, LwtOptions lwt) {
+    return begin(uri, client_id, username, password, lwt,
+                 DEFAULT_MQTT_KEEPALIVE, DEFAULT_MQTT_CLEAN_SESSION);
 }
 
 bool MQTTClient::begin(String uri, LwtOptions lwt, int keepalive, bool clean_session) {
-    String client_id = String("ESP_") + ESP.getChipId();
-    return begin(uri, client_id, lwt, keepalive, clean_session);
+    return begin(uri, "", "", "", lwt,
+                 keepalive, clean_session);
+}
+
+bool MQTTClient::begin(String uri, String username, String password, LwtOptions lwt, int keepalive, bool clean_session) {
+    return begin(uri, "", username, password, lwt,
+                 keepalive, clean_session);
 }
 
 bool MQTTClient::begin(String uri, String client_id, LwtOptions lwt, int keepalive, bool clean_session) {
+    return begin(uri, client_id, "", "", lwt,
+                 keepalive, clean_session);
+}
+
+bool MQTTClient::begin(String uri, String client_id, String username, String password, LwtOptions lwt, int keepalive, bool clean_session) {
     parsed_uri_t *puri = parse_uri(uri.c_str());
     MQTT_CHECK(puri->scheme == NULL, "ERROR: Protocol is not NULL\r\n", false);
     MQTT_CHECK(puri->host == NULL, "ERROR: Host is not NULL\r\n", false);
@@ -102,21 +146,22 @@ bool MQTTClient::begin(String uri, String client_id, LwtOptions lwt, int keepali
     _host = String(puri->host);
     _port = DEFAULT_MQTT_PORT;
     _path = "/";
-    _client_id = client_id;
-    LOG("MQTT ClientId: %s\r\n", _client_id.c_str());
     if (puri->port) {
         _port = atoi(puri->port);
     }
-
     if(puri->path) {
         _path = String(puri->path);
     }
-    if(puri->username)
-        _username = String(puri->username);
-    if(puri->password)
-        _password = String(puri->password);
-
     free_parsed_uri(puri);
+
+    _client_id = client_id;
+    if (_client_id.isEmpty()) {
+        _client_id = String("ESP_") + ESP.getChipId();
+    }
+    LOG("MQTT ClientId: %s\r\n", _client_id.c_str());
+
+    _username = username;
+    _password = password;
 
     _lwt_topic = String(lwt.lwtTopic);
     _lwt_msg = String(lwt.lwtMsg);

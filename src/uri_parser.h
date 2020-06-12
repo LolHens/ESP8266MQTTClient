@@ -4,17 +4,15 @@
 extern "C" {
 #endif
 typedef struct {
-	char *scheme;               /* mandatory */
-	char *host;                 /* mandatory */
-	char *port;                 /* optional */
-	char *path;                 /* optional */
-	char *query;                /* optional */
-	char *username;             /* optional */
-	char *password;             /* optional */
+    char *scheme;               /* mandatory */
+    char *host;                 /* mandatory */
+    char *port;                 /* optional */
+    char *path;                 /* optional */
+    char *query;                /* optional */
     char *extension;
     char *host_ext;
-	char *_uri;             	/* private */
-	int _uri_len;             	/* private */
+    char *_uri;             	/* private */
+    int _uri_len;             	/* private */
 } parsed_uri_t;
 
 parsed_uri_t *parse_uri(const char *);
