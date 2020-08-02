@@ -1,4 +1,6 @@
 # MQTT Client library for ESP8266 Arduino
+[![Release Notes](https://img.shields.io/github/release/LolHens/ESP8266MQTTClient.svg?maxAge=3600)](https://github.com/LolHens/ESP8266MQTTClient/releases/latest)
+[![Apache License 2.0](https://img.shields.io/github/license/LolHens/ESP8266MQTTClient.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
 
 This is a fork of https://github.com/tuanpmt/ESP8266MQTTClient
 
