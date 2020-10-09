@@ -15,13 +15,14 @@ jobs:
         with:
           args: ci --lib . --board d1_mini examples/MQTTClient
       - name: set version
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Update version in library.json
+          jq -n --argjson json "$(cat library.json)" --arg version "VERSION" '$json | .version=$version' > library.json
+      - uses: docker://lolhens/docker-platformio-core:latest
         env:
-          CI_VERSION: ${{ github.ref }}
-        run: jq -n --argjson json "$(cat library.json)" --arg version "$CI_VERSION" '$json | .version=$version' > library.json
-      - name: show version
-        run: cat library.json
-      #- uses: docker://lolhens/docker-platformio-core:latest
-      #  env:
-      #    PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
-      #  with:
-      #    args: package publish
+          PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+        with:
+          args: package publish
