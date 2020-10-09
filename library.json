@@ -1,0 +1,35 @@
+{
+  "name": "ESP8266MQTTClient",
+  "version": "1.1.0",
+  "description": "MQTT Client for ESP8266",
+  "keywords": [
+    "communication",
+    "mqtt",
+    "ethernet",
+    "websocket",
+    "wss",
+    "tls"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LolHens/ESP8266MQTTClient"
+  },
+  "authors": [
+    {
+      "name": "LolHens",
+      "url": "https://github.com/LolHens",
+      "maintainer": true
+    },
+    {
+      "name": "Tuan PM",
+      "url": "https://github.com/tuanpmt"
+    }
+  ],
+  "license": "Apache-2.0",
+  "frameworks": [
+    "arduino"
+  ],
+  "platforms": [
+    "espressif8266"
+  ]
+}
