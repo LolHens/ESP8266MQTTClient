@@ -15,6 +15,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lolhens/platformio-core:latest
+      - uses: docker://lolhens/docker-platformio-core:latest
         with:
           args: run build
