@@ -17,4 +17,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: docker://lolhens/docker-platformio-core:latest
         with:
-          args: run build
+          args: run compile
