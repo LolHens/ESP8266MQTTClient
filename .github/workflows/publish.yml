@@ -20,7 +20,7 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
           # Update version in library.json
-          jq -n --argjson json "$(cat library.json)" --arg version "VERSION" '$json | .version=$version' > library.json
+          jq -n --argjson json "$(cat library.json)" --arg version "$VERSION" '$json | .version=$version' > library.json
       - uses: docker://lolhens/docker-platformio-core:latest
         env:
           PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
