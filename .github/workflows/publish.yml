@@ -2,7 +2,7 @@ name: publish
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   publish:
@@ -14,3 +14,14 @@ jobs:
       - uses: docker://lolhens/docker-platformio-core:latest
         with:
           args: ci --lib . --board d1_mini examples/MQTTClient
+      - name: set version
+        env:
+          CI_VERSION: ${{ github.ref }}
+        run: jq -n --argjson json "$(cat library.json)" --arg version "$CI_VERSION" '$json | .version=$version' > library.json
+      - name: show version
+        run: cat library.json
+      #- uses: docker://lolhens/docker-platformio-core:latest
+      #  env:
+      #    PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+      #  with:
+      #    args: package publish

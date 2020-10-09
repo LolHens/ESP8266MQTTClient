@@ -31,5 +31,12 @@
   ],
   "platforms": [
     "espressif8266"
+  ],
+  "include": [
+    "src/",
+    "examples/",
+    "library.json",
+    "README.md",
+    "LICENSE"
   ]
 }
