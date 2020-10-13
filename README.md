@@ -3,7 +3,7 @@
 [![Release Notes](https://img.shields.io/github/release/LolHens/ESP8266MQTTClient.svg?maxAge=3600)](https://github.com/LolHens/ESP8266MQTTClient/releases/latest)
 [![Apache License 2.0](https://img.shields.io/github/license/LolHens/ESP8266MQTTClient.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
 
-This is a fork of https://github.com/tuanpmt/ESP8266MQTTClient.
+This is a fork of [tuanpmt/ESP8266MQTTClient](https://github.com/tuanpmt/ESP8266MQTTClient).
 
 This is an MQTT client library for ESP8266, using mqtt_msg package from [MQTT client library for Contiki](https://github.com/esar/contiki-mqtt) for use with the ESP8266 NON-OS SDK [esp_mqtt](https://github.com/tuanpmt/esp_mqtt).
 
