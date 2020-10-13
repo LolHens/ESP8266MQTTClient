@@ -70,4 +70,4 @@ Features:
 Copyright (c) 2016 Tuan PM (https://twitter.com/tuanpmt)
 ESP8266 port (c) 2016 Ivan Grokhotkov (ivan@esp8266.com)
 
-License Apache License
+This project uses the Apache 2.0 License. See the file called LICENSE.
