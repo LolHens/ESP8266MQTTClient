@@ -1,4 +1,5 @@
 # MQTT Client library for ESP8266 Arduino
+[![Test Workflow](https://github.com/LolHens/ESP8266MQTTClient/workflows/test/badge.svg)](https://github.com/LolHens/ESP8266MQTTClient/actions?query=workflow%3Atest)
 [![Release Notes](https://img.shields.io/github/release/LolHens/ESP8266MQTTClient.svg?maxAge=3600)](https://github.com/LolHens/ESP8266MQTTClient/releases/latest)
 [![Apache License 2.0](https://img.shields.io/github/license/LolHens/ESP8266MQTTClient.svg?maxAge=3600)](https://www.apache.org/licenses/LICENSE-2.0)
 
