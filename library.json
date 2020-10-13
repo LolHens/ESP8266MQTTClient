@@ -7,8 +7,10 @@
     "mqtt",
     "ethernet",
     "websocket",
+    "ws",
     "wss",
-    "tls"
+    "tls",
+    "qos"
   ],
   "repository": {
     "type": "git",
