@@ -10,14 +10,14 @@ This is an MQTT client library for ESP8266, using mqtt_msg package from [MQTT cl
 
 Features:
 
-- Support subscribing, publishing, authentication, will messages, keep alive pings and all 3 QoS levels (it should be a fully functional client).
+- Supports subscribing, publishing, authentication, will messages, keep alive pings and all 3 QoS levels (it should be a fully functional client).
 
 ## Requirements
 - ESP8266WiFi
 - WiFiClientSecure
 
 ## Status
-- Support 3 type of qos (0, 1, 2) and outbox
+- Supports all 3 qos types (0, 1, 2) and outbox
 - Supports MQTT over TCP, TLS, Websocket and Secure Websocket
 
 ## MQTT URI Scheme
