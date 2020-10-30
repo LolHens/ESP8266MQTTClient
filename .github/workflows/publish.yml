@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lolhens/docker-platformio-core:latest
+      - uses: docker://sglahn/platformio-core:5.0.1
         with:
           args: ci --lib . --board d1_mini examples/MQTTClient
       - name: set version
@@ -21,7 +21,7 @@ jobs:
 
           # Update version in library.json
           jq -n --argjson json "$(cat library.json)" --arg version "$VERSION" '$json | .version=$version' > library.json
-      - uses: docker://lolhens/docker-platformio-core:latest
+      - uses: docker://sglahn/platformio-core:5.0.1
         env:
           PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
         with:

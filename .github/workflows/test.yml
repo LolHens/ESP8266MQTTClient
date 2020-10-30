@@ -15,6 +15,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: docker://lolhens/docker-platformio-core:latest
+      - uses: docker://sglahn/platformio-core:5.0.1
         with:
           args: ci --lib . --board d1_mini examples/MQTTClient
